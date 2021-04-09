@@ -46,7 +46,7 @@ apply plugin: 'application'
 apply plugin: 'nebula.ospackage'
 apply plugin: 'com.palantir.git-version'
 
-mainClassName = 'uk.co.ractf.yakshaver.YakshaverApplication'
+mainClassName = 'uk.co.ractf.yakrazor.YakrazorApplication'
 
 shadowJar {
     mergeServiceFiles()
@@ -61,18 +61,18 @@ shadowJar {
         attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
         attributes 'Main-Class': mainClassName
     }
-    archiveName 'yakshaver.jar'
+    archiveName 'yakrazor.jar'
 }
 
 buildRpm {
-    packageName = 'yakshaver'
+    packageName = 'yakrazor'
     def details = versionDetails(prefix: 'rc@')
     release = details.lastTag
     version = rootProject.version
     arch = 'X86_64'
     os = 'LINUX'
     license = 'AGPL'
-    url = 'https://github.com/ractf/yakshaver'
+    url = 'https://github.com/ractf/yakrazor'
     vendor = 'RACTF'
     packageDescription = 'The RACTF test runner'
     maintainer = 'RACTF <admins@ractf.co.uk>'
@@ -85,7 +85,7 @@ buildRpm {
     requires('docker-compose')
 
     from(shadowJar.outputs.files) {
-        into '/opt/yakshaver'
+        into '/opt/yakrazor'
         createDirectoryEntry = true
     }
 }
