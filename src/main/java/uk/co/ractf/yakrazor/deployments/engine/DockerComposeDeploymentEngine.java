@@ -1,7 +1,5 @@
 package uk.co.ractf.yakrazor.deployments.engine;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -31,8 +29,6 @@ public class DockerComposeDeploymentEngine implements DeploymentEngine {
         deploymentVariables.put("repository", deployment.getRepository());
         deploymentVariables.put("branch", deployment.getBranch());
         context.setVariable("deployment", deploymentVariables);
-
-
         String composeTemplatePath = workingDir.getAbsolutePath() + "/.yakrazor/docker-compose.yml";
         String compose = templateEngine.process(composeTemplatePath, context);
         try {
