@@ -1,6 +1,7 @@
 package uk.co.ractf.yakrazor.persistence.model;
 
 import uk.co.ractf.yakrazor.deployments.DeploymentListener;
+import uk.co.ractf.yakrazor.persistence.converter.HashMapConverter;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class Deployment {
     @Column(nullable = false)
     private String branch;
 
-    @ElementCollection(targetClass = String.class)
+    @Convert(converter = HashMapConverter.class)
     private Map<String, Object> variables;
 
     public long getId() {
