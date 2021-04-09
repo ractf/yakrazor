@@ -1,3 +1,18 @@
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.1"
+        classpath "com.palantir.gradle.gitversion:gradle-git-version:0.12.3"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.4.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -5,7 +20,7 @@ plugins {
 }
 
 group = 'uk.co.ractf'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 repositories {
@@ -24,4 +39,53 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+apply plugin: 'nebula.ospackage'
+apply plugin: 'com.palantir.git-version'
+
+mainClassName = 'uk.co.ractf.yakshaver.YakshaverApplication'
+
+shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': name
+        attributes 'Implementation-Version': version
+        attributes 'Implementation-Vendor-Id': group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName 'yakshaver.jar'
+}
+
+buildRpm {
+    packageName = 'yakshaver'
+    def details = versionDetails(prefix: 'rc@')
+    release = details.lastTag
+    version = rootProject.version
+    arch = 'X86_64'
+    os = 'LINUX'
+    license = 'AGPL'
+    url = 'https://github.com/ractf/yakshaver'
+    vendor = 'RACTF'
+    packageDescription = 'The RACTF test runner'
+    maintainer = 'RACTF <admins@ractf.co.uk>'
+    user = 'root'
+    group = 'root'
+
+    requires('systemd')
+    requires('java-11-openjdk')
+    requires('docker-ce')
+    requires('docker-compose')
+
+    from(shadowJar.outputs.files) {
+        into '/opt/yakshaver'
+        createDirectoryEntry = true
+    }
 }
