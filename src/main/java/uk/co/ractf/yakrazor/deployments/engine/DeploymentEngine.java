@@ -6,6 +6,10 @@ import java.io.File;
 
 public interface DeploymentEngine {
 
-    void deploy(final File workingDir, final Deployment deployment);
+    void createDeployment(final File workingDir, final Deployment deployment);
+
+    void removeDeployment(final File workingDir, final Deployment deployment);
+
+    void updateDeployment(final File workingDir, final Deployment deployment);
 
 }

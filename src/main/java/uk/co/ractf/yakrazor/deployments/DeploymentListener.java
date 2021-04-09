@@ -3,9 +3,6 @@ package uk.co.ractf.yakrazor.deployments;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.util.FileSystemUtils;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.FileTemplateResolver;
 import uk.co.ractf.yakrazor.deployments.engine.DockerComposeDeploymentEngine;
 import uk.co.ractf.yakrazor.persistence.model.Deployment;
 
@@ -28,7 +25,7 @@ public class DeploymentListener {
                     .setDirectory(workingDir)
                     .setBranchesToClone(Collections.singleton(deployment.getBranch()))
                     .setBranch(deployment.getBranch()).call();
-            new DockerComposeDeploymentEngine().deploy(workingDir, deployment);
+            new DockerComposeDeploymentEngine().createDeployment(workingDir, deployment);
 
 
         } catch (GitAPIException e) {
@@ -36,4 +33,7 @@ public class DeploymentListener {
         }
     }
 
+    @PreRemove
+    void preRemove(final Object object) {
+    }
 }

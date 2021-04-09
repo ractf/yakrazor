@@ -1,5 +1,6 @@
 package uk.co.ractf.yakrazor.deployments.engine;
 
+import org.springframework.util.FileSystemUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -9,6 +10,7 @@ import uk.co.ractf.yakrazor.persistence.model.Deployment;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.Map;
 public class DockerComposeDeploymentEngine implements DeploymentEngine {
 
     @Override
-    public void deploy(final File workingDir, final Deployment deployment) {
+    public void createDeployment(final File workingDir, final Deployment deployment) {
         TemplateEngine templateEngine = new SpringTemplateEngine();
         FileTemplateResolver templateResolver = new FileTemplateResolver();
         templateResolver.setTemplateMode(TemplateMode.TEXT);
@@ -37,7 +39,28 @@ public class DockerComposeDeploymentEngine implements DeploymentEngine {
             throw new RuntimeException(e);
         }
         try {
-            new ProcessBuilder().directory(workingDir).command("docker-compose", "up", "-d").inheritIO().start();
+            new ProcessBuilder().directory(workingDir).command("docker-compose", "up", "-d").start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void removeDeployment(final File workingDir, final Deployment deployment) {
+        try {
+            new ProcessBuilder().directory(workingDir).command("docker-compose", "rm", "-sf").start();
+            FileSystemUtils.deleteRecursively(workingDir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateDeployment(final File workingDir, final Deployment deployment) {
+        try {
+            new ProcessBuilder().directory(workingDir).command("git", "pull").start();
+            new ProcessBuilder().directory(workingDir).command("docker-compose", "rm", "-sf").start();
+            new ProcessBuilder().directory(workingDir).command("docker-compose", "up", "-d").start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
