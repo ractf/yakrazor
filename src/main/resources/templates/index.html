@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html th:replace="~{base.html :: layout(~{::title}, ~{::section})}">
 <head>
-    <title>Page Title</title>
+    <title>Yakrazor</title>
 </head>
 <body>
 <section>
@@ -12,13 +12,15 @@
                     <thead>
                     <tr>
                         <th scope="col">Name</th>
-                        <th scope="col">Creator</th>
+                        <th scope="col">Repository</th>
+                        <th scope="col">Branch</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="deployment : ${deployments}">
                         <td th:text="${deployment.name}"></td>
-                        <td th:text="${deployment.Creator}"></td>
+                        <td th:text="${deployment.repository}"></td>
+                        <td th:text="${deployment.branch}"></td>
                     </tr>
                     </tbody>
                 </table>

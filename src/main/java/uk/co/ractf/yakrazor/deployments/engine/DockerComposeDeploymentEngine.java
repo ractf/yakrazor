@@ -37,7 +37,7 @@ public class DockerComposeDeploymentEngine implements DeploymentEngine {
         deploymentVariables.put("repository", deployment.getRepository());
         deploymentVariables.put("branch", deployment.getBranch());
         Map<String, Object> deploymentVariablesNested = new HashMap<>();
-        deploymentVariablesNested.put("deployments", deploymentVariables);
+        deploymentVariablesNested.put("deployment", deploymentVariables);
 
         String composeTemplatePath = workingDir.getAbsolutePath() + "/.yakrazor/docker-compose.yml";
         String compose = templateProcessor.processTemplate(composeTemplatePath,
