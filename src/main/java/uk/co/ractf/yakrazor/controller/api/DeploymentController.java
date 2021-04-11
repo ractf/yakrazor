@@ -82,6 +82,14 @@ public class DeploymentController {
         deploymentRepository.save(deployment);
     }
 
+    @PostMapping("/update/{id}")
+    public void updateDeployment(@PathVariable final Long id) {
+        Deployment deployment = deploymentRepository.findById(id).orElseThrow(DeploymentNotFoundException::new);
+        File workingDir = new File("/opt/ractf/yakrazor/" + deployment.getName());
+        YakrazorConfig yakrazorConfig = getYakrazorConfig(workingDir);
+        deploymentEngineProvider.getDeploymentEngine(yakrazorConfig.getEngine()).updateDeployment(workingDir, deployment, yakrazorConfig);
+    }
+
     private YakrazorConfig getYakrazorConfig(final File workingDir) {
         try {
             String configString = Files.readString(Paths.get(workingDir.getAbsolutePath(), ".yakrazor", "yakrazor.json"));
