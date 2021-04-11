@@ -1,4 +1,4 @@
-package uk.co.ractf.yakrazor.controller;
+package uk.co.ractf.yakrazor.controller.ui;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Entity
 @Table(name = "services")
-public class Service {
+public class Application {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

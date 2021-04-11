@@ -1,13 +1,11 @@
 package uk.co.ractf.yakrazor.persistence.model;
 
-import uk.co.ractf.yakrazor.deployments.DeploymentListener;
 import uk.co.ractf.yakrazor.persistence.converter.HashMapConverter;
 
 import javax.persistence.*;
 import java.util.Map;
 
 @Entity
-@EntityListeners(DeploymentListener.class)
 @Table(name = "deployments")
 public class Deployment {
 
