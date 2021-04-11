@@ -8,6 +8,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col" style="max-width: 90%;">
+                <h1>Deployments</h1>
                 <table class="table">
                     <thead>
                     <tr>
@@ -18,9 +19,24 @@
                     </thead>
                     <tbody>
                     <tr th:each="deployment : ${deployments}">
-                        <td th:text="${deployment.name}"></td>
-                        <td th:text="${deployment.repository}"></td>
+                        <td><a th:href="'/deployment/' + ${deployment.id}" th:text="${deployment.name}"></a></td>
+                        <td><a th:href="${deployment.repository}" th:text="${deployment.repository}"></a></td>
                         <td th:text="${deployment.branch}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col" style="max-width: 90%;">
+                <h1>Applications</h1>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="app : ${applications}">
+                        <td th:text="${app.name}"></td>
                     </tr>
                     </tbody>
                 </table>

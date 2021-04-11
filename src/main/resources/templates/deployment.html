@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html th:replace="~{base.html :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${deployment.name} + ' - Yakrazor'"></title>
+</head>
+<body>
+<section>
+    <script type="text/javascript">
+        function update(id) {
+            alert(id);
+            const Http = new XMLHttpRequest();
+            const url = '/api/deployments/update/' + id;
+            Http.open("POST", url);
+            Http.send();
+            Http.onreadystatechange=(e)=>{
+                alert("Deployment updated");
+            }
+        }
+        function stop(id) {
+            alert(id);
+            const Http = new XMLHttpRequest();
+            const url = '/api/deployments/' + id;
+            Http.open("DELETE", url);
+            Http.send();
+            Http.onreadystatechange=(e)=>{
+                alert("Deployment stopped");
+            }
+        }
+    </script>
+    <h1 th:text="${deployment.name}"></h1>
+    <h2>Variables</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="variable : ${deployment.variables}">
+            <td th:text="${variable.key}"></td>
+            <td th:text="${deployment.value}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-success" th:onclick="'update(' + ${deployment.id} + ')'">Update</button>
+    <button type="button" class="btn btn-danger" th:onclick="'stop(' + ${deployment.id} + ')'">Stop</button>
+</section>
+</body>
+</html>
