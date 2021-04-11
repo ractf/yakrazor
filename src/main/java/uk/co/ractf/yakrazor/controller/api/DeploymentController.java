@@ -46,23 +46,24 @@ public class DeploymentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Deployment create(@RequestBody final Deployment deployment) {
+        File workingDir = new File("/opt/ractf/yakrazor/" + deployment.getName());
+        FileSystemUtils.deleteRecursively(workingDir);
+        if (!workingDir.exists() && !workingDir.mkdirs()) {
+            throw new IllegalStateException("Cannot create working dir");
+        }
+
         try {
-            File workingDir = new File("/opt/ractf/yakrazor/" + deployment.getName());
-            FileSystemUtils.deleteRecursively(workingDir);
-            if (!workingDir.exists() && !workingDir.mkdirs()) {
-                throw new IllegalStateException("Cannot create working dir");
-            }
             Git.cloneRepository()
                     .setURI(deployment.getRepository())
                     .setDirectory(workingDir)
                     .setBranchesToClone(Collections.singleton(deployment.getBranch()))
                     .setBranch(deployment.getBranch()).call();
-            YakrazorConfig yakrazorConfig = getYakrazorConfig(workingDir);
-
-            deploymentEngineProvider.getDeploymentEngine(yakrazorConfig.getEngine()).startDeployment(workingDir, deployment, yakrazorConfig);
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
         }
+
+        YakrazorConfig yakrazorConfig = getYakrazorConfig(workingDir);
+        deploymentEngineProvider.getDeploymentEngine(yakrazorConfig.getEngine()).startDeployment(workingDir, deployment, yakrazorConfig);
         return deploymentRepository.save(deployment);
     }
 

@@ -9,6 +9,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import uk.co.ractf.yakrazor.deployments.YakrazorConfig;
+import uk.co.ractf.yakrazor.deployments.templating.TemplateProcessor;
 import uk.co.ractf.yakrazor.persistence.model.Application;
 import uk.co.ractf.yakrazor.persistence.model.Deployment;
 import uk.co.ractf.yakrazor.persistence.repository.ApplicationRepository;
@@ -24,37 +25,26 @@ import java.util.Map;
 public class DockerComposeDeploymentEngine implements DeploymentEngine {
 
     private ApplicationRepository applicationRepository;
+    private TemplateProcessor templateProcessor;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void startDeployment(final File workingDir, final Deployment deployment, final YakrazorConfig config) {
-        TemplateEngine templateEngine = new SpringTemplateEngine();
-        FileTemplateResolver templateResolver = new FileTemplateResolver();
-        templateResolver.setTemplateMode(TemplateMode.TEXT);
-        templateEngine.setTemplateResolver(templateResolver);
-
-        Context context = new Context();
         Application application = applicationRepository.findByName(config.getName());
-        if (application != null) {
-            context.setVariables(application.getVariables());
-        }
-        for (Map.Entry<String, Object> variable : deployment.getVariables().entrySet()) {
-            context.setVariable(variable.getKey(), variable.getValue());
-        }
 
         Map<String, String> deploymentVariables = new HashMap<>();
         deploymentVariables.put("name", deployment.getName());
         deploymentVariables.put("repository", deployment.getRepository());
         deploymentVariables.put("branch", deployment.getBranch());
-        context.setVariable("deployment", deploymentVariables);
+        Map<String, Object> deploymentVariablesNested = new HashMap<>();
+        deploymentVariablesNested.put("deployments", deploymentVariables);
 
         String composeTemplatePath = workingDir.getAbsolutePath() + "/.yakrazor/docker-compose.yml";
-        String compose = templateEngine.process(composeTemplatePath, context);
+        String compose = templateProcessor.processTemplate(composeTemplatePath,
+                application != null ? application.getVariables() : null,
+                deployment.getVariables(), deploymentVariablesNested);
         try {
             Files.writeString(Paths.get(workingDir.getAbsolutePath(), "docker-compose.yml"), compose);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
             new ProcessBuilder().directory(workingDir).command("docker-compose", "up", "-d").start();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -90,5 +80,10 @@ public class DockerComposeDeploymentEngine implements DeploymentEngine {
     @Autowired
     public void setApplicationRepository(final ApplicationRepository applicationRepository) {
         this.applicationRepository = applicationRepository;
+    }
+
+    @Autowired
+    public void setTemplateProcessor(final TemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
     }
 }
