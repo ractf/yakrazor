@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'uk.co.ractf'
-version = '0.0.6'
+version = '0.0.7'
 sourceCompatibility = '11'
 
 repositories {
@@ -61,6 +61,10 @@ shadowJar {
         attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
         attributes 'Main-Class': mainClassName
     }
+    archiveName 'yakrazor.jar'
+}
+
+bootJar {
     archiveName 'yakrazor.jar'
 }
 
