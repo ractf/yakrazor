@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'uk.co.ractf'
-version = '0.0.4'
+version = '0.0.5'
 sourceCompatibility = '11'
 
 repositories {
@@ -87,5 +87,10 @@ buildRpm {
     from(shadowJar.outputs.files) {
         into '/opt/yakrazor'
         createDirectoryEntry = true
+    }
+
+    from('src/main/dist/bin') {
+        into '/etc/systemd/system'
+        addParentDirs = false
     }
 }

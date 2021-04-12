@@ -1,0 +1,12 @@
+[Unit]
+Description=The RACTF test runner
+
+[Service]
+WorkingDirectory=/opt/yakrazor
+ExecStart=/bin/java -jar /opt/yakrazor/yakrazor.jar
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
