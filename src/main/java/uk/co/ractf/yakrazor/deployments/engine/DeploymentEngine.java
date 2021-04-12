@@ -1,6 +1,6 @@
 package uk.co.ractf.yakrazor.deployments.engine;
 
-import uk.co.ractf.yakrazor.deployments.YakrazorConfig;
+import uk.co.ractf.yakrazor.config.YakrazorConfig;
 import uk.co.ractf.yakrazor.persistence.model.Deployment;
 
 import java.io.File;

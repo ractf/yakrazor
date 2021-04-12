@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
-import uk.co.ractf.yakrazor.deployments.YakrazorConfig;
+import uk.co.ractf.yakrazor.config.YakrazorConfig;
 import uk.co.ractf.yakrazor.deployments.engine.DeploymentEngineProvider;
 import uk.co.ractf.yakrazor.exception.DeploymentNotFoundException;
 import uk.co.ractf.yakrazor.persistence.model.Deployment;

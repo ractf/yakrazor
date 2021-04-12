@@ -1,4 +1,4 @@
-package uk.co.ractf.yakrazor.deployments;
+package uk.co.ractf.yakrazor.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

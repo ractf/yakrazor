@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'uk.co.ractf'
-version = '0.0.5'
+version = '0.0.6'
 sourceCompatibility = '11'
 
 repositories {
@@ -84,7 +84,7 @@ buildRpm {
     requires('docker-ce')
     requires('docker-compose')
 
-    from(shadowJar.outputs.files) {
+    from(bootJar.outputs.files) {
         into '/opt/yakrazor'
         createDirectoryEntry = true
     }

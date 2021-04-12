@@ -54,7 +54,7 @@ jobs:
 
       - name: Build JAR
         if: steps.semver_change.outputs.changed == 'true'
-        run: ./gradlew shadowJar
+        run: ./gradlew bootJar
 
       - name: Create Release
         if: steps.semver_change.outputs.changed == 'true'
