@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import uk.co.ractf.yakrazor.config.YakrazorConfig;
 import uk.co.ractf.yakrazor.deployments.engine.DeploymentEngineProvider;
 import uk.co.ractf.yakrazor.exception.DeploymentNotFoundException;
@@ -46,10 +47,14 @@ public class DeploymentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Deployment create(@RequestBody final Deployment deployment) {
+        if (deploymentRepository.findByName(deployment.getName()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "deployment_name_in_use");
+        }
+
         File workingDir = new File("/opt/ractf/yakrazor/" + deployment.getName());
         FileSystemUtils.deleteRecursively(workingDir);
         if (!workingDir.exists() && !workingDir.mkdirs()) {
-            throw new IllegalStateException("Cannot create working dir");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot create working dir.");
         }
 
         try {
@@ -59,7 +64,7 @@ public class DeploymentController {
                     .setBranchesToClone(Collections.singleton(deployment.getBranch()))
                     .setBranch(deployment.getBranch()).call();
         } catch (GitAPIException e) {
-            throw new RuntimeException(e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         YakrazorConfig yakrazorConfig = getYakrazorConfig(workingDir);
